@@ -1,67 +1,97 @@
-# Payload Blank Template
+# Payload Chat System
 
-This template comes configured with the bare minimum to get started on anything you need.
+A complete real-time chat solution built with Payload CMS, Socket.IO, and Next.js.
 
-## Quick start
+## Features
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+- **Real-time Chat**: Powered by a standalone Socket.IO server.
+- **Role-Based Access Control (RBAC)**: Admin, Support, and Candidate roles.
+- **Support Dashboard**: Dedicated interface for support agents to manage conversations.
+- **Candidate Widget**: Responsive chat widget for candidates to contact support.
+- **Modern UI**: Built with Tailwind CSS and responsive design.
 
-## Quick Start - local setup
+## Prerequisites
 
-To spin up this template locally, follow these steps:
+- Node.js (v18+)
+- pnpm
+- MongoDB (running locally on `mongodb://127.0.0.1:27017`)
 
-### Clone
+## Installation
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+1.  **Install Dependencies**:
+    ```bash
+    pnpm install
+    ```
 
-### Development
+2.  **Install Socket Server Dependencies**:
+    ```bash
+    cd socket-server
+    pnpm install
+    cd ..
+    ```
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URI` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+## Environment Setup
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+Ensure you have a `.env` file in the root directory with the following:
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+```env
+DATABASE_URI=mongodb://127.0.0.1/chatv2
+PAYLOAD_SECRET=YOUR_SECRET_KEY
+PAYLOAD_PUBLIC_SERVER_URL=http://localhost:3000
+NEXT_PUBLIC_SOCKET_URL=http://localhost:38120
+SOCKET_PORT=38120
+```
 
-#### Docker (Optional)
+## Database Seeding
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+Populate the database with roles and default users:
 
-To do so, follow these steps:
+```bash
+pnpm run seed
+```
 
-- Modify the `MONGODB_URI` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URI` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+This will create:
+- **Roles**: Admin, Support, Candidate
+- **Users**:
+    - **Admin**: `admin@test.com` / `password`
+    - **Support**: `support@test.com` / `password`
+    - **Candidate**: `candidate@test.com` / `password`
 
-## How it works
+## Running the Application
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+You need to run both the Payload CMS (Next.js) and the Socket Server.
 
-### Collections
+1.  **Start Socket Server** (Terminal 1):
+    ```bash
+    cd socket-server
+    pnpm start
+    ```
+    *Runs on port 38120*
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+2.  **Start Payload CMS** (Terminal 2):
+    ```bash
+    pnpm dev
+    ```
+    *Runs on http://localhost:3000*
 
-- #### Users (Authentication)
+## Usage Guide
 
-  Users are auth-enabled collections that have access to the admin panel.
+### 1. Admin Panel
+- **URL**: `http://localhost:3000/admin`
+- **Login**: `admin@test.com` / `password`
+- **Actions**: Manage users, roles, and view all collections.
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+### 2. Support Dashboard
+- **URL**: `http://localhost:3000/admin/support`
+- **Login**: `support@test.com` / `password`
+- **Actions**: View active conversations and chat with candidates.
 
-- #### Media
+### 3. Candidate Chat
+- **URL**: `http://localhost:3000` (Home page)
+- **Login**: `candidate@test.com` / `password` (Log in via Admin panel first to establish session, or implement a custom login page)
+- **Actions**: Click the chat bubble in the bottom-right corner to start a conversation.
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+## Troubleshooting
 
-### Docker
-
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
-
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
-
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
-
-## Questions
-
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+- **Socket Connection Failed**: Ensure the socket server is running (`pnpm start` in `socket-server`) and `NEXT_PUBLIC_SOCKET_URL` matches the port.
+- **Login Issues**: If "Create First User" appears, re-run `pnpm run seed`.
