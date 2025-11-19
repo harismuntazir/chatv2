@@ -65,8 +65,31 @@ export const chatEndpoints: Endpoint[] = [
         return Response.json({ error: 'Unauthorized' }, { status: 401 })
       }
 
+      // 1. Find the 'candidate' role ID
+      const rolesQuery = await payload.find({
+        collection: 'roles',
+        where: {
+          slug: {
+            equals: 'candidate',
+          },
+        },
+        limit: 1,
+      })
+
+      if (rolesQuery.totalDocs === 0) {
+        return Response.json([])
+      }
+
+      const candidateRoleId = rolesQuery.docs[0].id
+
+      // 2. Find conversations where the candidate user has the candidate role
       const conversations = await payload.find({
         collection: 'conversations',
+        where: {
+          'candidate.roles': {
+            equals: candidateRoleId,
+          },
+        },
         sort: '-lastMessageAt',
         limit: 50,
       })
