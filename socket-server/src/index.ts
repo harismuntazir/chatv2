@@ -1,8 +1,6 @@
 import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import { createAdapter } from '@socket.io/redis-adapter'
-import { createClient } from 'redis'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { authMiddleware } from './auth'
@@ -21,15 +19,9 @@ const io = new Server(httpServer, {
   },
 })
 
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379'
+console.log('Socket.IO server starting with in-memory adapter')
 
 ;(async () => {
-  const pubClient = createClient({ url: REDIS_URL })
-  const subClient = pubClient.duplicate()
-
-  await Promise.all([pubClient.connect(), subClient.connect()])
-
-  io.adapter(createAdapter(pubClient, subClient))
 
   io.use(authMiddleware)
 
@@ -49,7 +41,7 @@ const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379'
     })
   })
 
-  const PORT = process.env.SOCKET_PORT || 4001
+  const PORT = process.env.SOCKET_PORT || 38120
   httpServer.listen(PORT, () => {
     console.log(`Socket server running on port ${PORT}`)
   })

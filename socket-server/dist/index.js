@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const http_1 = require("http");
 const socket_io_1 = require("socket.io");
-const redis_adapter_1 = require("@socket.io/redis-adapter");
-const redis_1 = require("redis");
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const auth_1 = require("./auth");
@@ -22,12 +20,8 @@ const io = new socket_io_1.Server(httpServer, {
         methods: ['GET', 'POST'],
     },
 });
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+console.log('Socket.IO server starting with in-memory adapter');
 (async () => {
-    const pubClient = (0, redis_1.createClient)({ url: REDIS_URL });
-    const subClient = pubClient.duplicate();
-    await Promise.all([pubClient.connect(), subClient.connect()]);
-    io.adapter((0, redis_adapter_1.createAdapter)(pubClient, subClient));
     io.use(auth_1.authMiddleware);
     io.on('connection', (socket) => {
         var _a;
@@ -43,7 +37,7 @@ const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
             console.log('User disconnected');
         });
     });
-    const PORT = process.env.SOCKET_PORT || 4001;
+    const PORT = process.env.SOCKET_PORT || 38120;
     httpServer.listen(PORT, () => {
         console.log(`Socket server running on port ${PORT}`);
     });
