@@ -5,7 +5,7 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
   let user = socket.data.user
 
   const PAYLOAD_URL = process.env.PAYLOAD_URL || 'http://localhost:3000'
-  
+
   // If no user (anonymous socket), try to infer from conversation
   let senderId = user?.id
   let senderRole = user?.roles?.some((r: any) => r.slug === 'candidate') ? 'candidate' : 'support'
@@ -33,6 +33,12 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
 
   // 2. Persist message via Payload REST API
   try {
+    // Normalise attachments either from top-level `attachments` or `meta.attachments` and convert to Payload shape
+    const attachmentIds = attachments || (meta && meta.attachments) || []
+    const attachmentsForDb = Array.isArray(attachmentIds)
+      ? attachmentIds.map((id: string) => ({ file: id }))
+      : []
+
     // Simplified persistence for MVP:
     const response = await fetch(`${PAYLOAD_URL}/api/chat_messages`, {
       method: 'POST',
@@ -44,7 +50,7 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
         from: senderId,
         role: senderRole,
         text,
-        attachments,
+        attachments: attachmentsForDb,
         meta,
         status: 'sent',
       }),
@@ -57,8 +63,25 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
 
     const savedMessage = await response.json()
 
+    // Try to fetch a populated version of the saved message (so clients get file urls & metadata)
+    let messageToEmit = savedMessage.doc
+    try {
+      const fetchRes = await fetch(
+        `${PAYLOAD_URL}/api/chat_messages/${savedMessage.doc.id}?depth=1`,
+      )
+      if (fetchRes.ok) {
+        const fetched = await fetchRes.json()
+        if (fetched && fetched.doc) {
+          messageToEmit = fetched.doc
+        }
+      }
+    } catch (err) {
+      // Ignore — fallback to savedMessage.doc if we couldn't populate.
+      console.error('Failed to fetch populated message', err)
+    }
+
     // 3. Emit to room
-    io.to(`chat:${conversationId}`).emit('message', savedMessage.doc)
+    io.to(`chat:${conversationId}`).emit('message', messageToEmit)
 
     // 4. Notify support dashboard
     io.to('support').emit('conversationUpdated', {
@@ -66,7 +89,6 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
       lastMessage: savedMessage.doc,
       unreadCount: 1, // Simplified: In real app, calculate actual unread count
     })
-
   } catch (error) {
     console.error('Error handling message:', error)
   }

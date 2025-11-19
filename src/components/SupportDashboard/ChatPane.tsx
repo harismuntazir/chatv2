@@ -17,6 +17,7 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
     if (conversationId) {
       fetch(`/api/chat_messages?where[conversation][equals]=${conversationId}&sort=createdAt`, {
         cache: 'no-store',
+        credentials: 'include',
       })
         .then((res) => res.json())
         .then((data) => {
@@ -68,7 +69,7 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'image/jpeg',
         'image/png',
-        'image/jpg'
+        'image/jpg',
       ]
       if (validTypes.includes(file.type)) {
         setSelectedFile(file)
@@ -91,9 +92,10 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
       try {
         const res = await fetch('/api/media', {
           method: 'POST',
+          credentials: 'include',
           body: formData,
         })
-        
+
         if (res.ok) {
           const data = await res.json()
           attachments.push(data.doc.id)
@@ -112,7 +114,7 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
     socket.emit('message', {
       conversationId,
       text: inputValue,
-      attachments,
+      meta: { attachments },
     })
     setInputValue('')
     setSelectedFile(null)
@@ -142,32 +144,45 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
                     const file = att.file || att
                     if (!file) return null
                     const isImage = file.mimeType?.startsWith('image/')
-                    
+
                     if (isImage) {
                       return (
-                        <img 
-                          key={i} 
-                          src={file.url} 
-                          alt={file.alt} 
-                          className="rounded-lg max-h-48 object-cover w-full bg-black/10" 
+                        <img
+                          key={i}
+                          src={file.url}
+                          alt={file.alt}
+                          className="rounded-lg max-h-48 object-cover w-full bg-black/10"
                         />
                       )
                     }
-                    
+
                     return (
-                      <a 
-                        key={i} 
-                        href={file.url} 
-                        target="_blank" 
+                      <a
+                        key={i}
+                        href={file.url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className={`flex items-center gap-2 p-2 rounded-lg ${
-                          msg.role === 'support' ? 'bg-blue-700/50 hover:bg-blue-700' : 'bg-gray-100 hover:bg-gray-200'
+                          msg.role === 'support'
+                            ? 'bg-blue-700/50 hover:bg-blue-700'
+                            : 'bg-gray-100 hover:bg-gray-200'
                         } transition-colors`}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 shrink-0"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                            clipRule="evenodd"
+                          />
                         </svg>
-                        <span className="truncate underline decoration-dotted underline-offset-2">{file.filename}</span>
+                        <span className="truncate underline decoration-dotted underline-offset-2">
+                          {file.filename}
+                        </span>
                       </a>
                     )
                   })}
@@ -191,34 +206,61 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
           <div className="flex items-center gap-2 overflow-hidden">
             <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
               {selectedFile.type.startsWith('image/') ? (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               )}
             </div>
             <span className="text-xs text-gray-600 truncate">{selectedFile.name}</span>
           </div>
-          <button 
+          <button
             onClick={() => {
               setSelectedFile(null)
               if (fileInputRef.current) fileInputRef.current.value = ''
             }}
             className="text-gray-400 hover:text-red-500 transition-colors p-1"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
             </svg>
           </button>
         </div>
       )}
 
       <div className="p-4 bg-white border-t border-gray-200 flex gap-3 items-end">
-        <input 
-          type="file" 
+        <input
+          type="file"
           ref={fileInputRef}
           className="hidden"
           accept=".pdf,.docx,.jpg,.jpeg,.png"
@@ -229,8 +271,17 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
           className="text-gray-400 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors mb-3"
           title="Attach file"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clipRule="evenodd" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z"
+              clipRule="evenodd"
+            />
           </svg>
         </button>
         <textarea
