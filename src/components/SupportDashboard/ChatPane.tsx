@@ -30,7 +30,7 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
   }, [messages])
 
   useEffect(() => {
-    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4001'
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:38120'
     const { io } = require('socket.io-client')
     const newSocket = io(socketUrl, {
       transports: ['websocket'],

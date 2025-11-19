@@ -3,28 +3,46 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.messageHandler = void 0;
 const messageHandler = async (io, socket, payload) => {
     const { conversationId, text, meta } = payload;
-    const user = socket.data.user;
-    if (!user)
+    let user = socket.data.user;
+    const PAYLOAD_URL = process.env.PAYLOAD_URL || 'http://localhost:3000';
+    // If no user (anonymous socket), try to infer from conversation
+    let senderId = user === null || user === void 0 ? void 0 : user.id;
+    let senderRole = (user === null || user === void 0 ? void 0 : user.collection) === 'candidates' ? 'candidate' : 'support';
+    if (!user) {
+        try {
+            // Fetch conversation to find the candidate
+            const convRes = await fetch(`${PAYLOAD_URL}/api/conversations/${conversationId}`);
+            if (convRes.ok) {
+                const conv = await convRes.json();
+                // Assume unauthenticated user is the candidate of this conversation
+                senderId = typeof conv.candidate === 'object' ? conv.candidate.id : conv.candidate;
+                senderRole = 'candidate';
+            }
+        }
+        catch (err) {
+            console.error('Failed to fetch conversation for auth inference', err);
+            return;
+        }
+    }
+    if (!senderId) {
+        console.error('Could not identify sender');
         return;
-    // 1. Validate (Optional: call Payload API to verify access if not trusted)
+    }
     // 2. Persist message via Payload REST API
     try {
-        const PAYLOAD_URL = process.env.PAYLOAD_URL || 'http://localhost:3000';
-        const PAYLOAD_SECRET = process.env.PAYLOAD_SECRET; // Use a server-to-server token or API key if available
-        // For now, we assume we can post as the user or use a system token.
-        // Ideally, we use a system API key to create the message on behalf of the user.
-        // Or we just forward the user's token if it's valid for the API.
         // Simplified persistence for MVP:
         const response = await fetch(`${PAYLOAD_URL}/api/chat_messages`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // 'Authorization': `Bearer ${token}` // We need a token here.
             },
             body: JSON.stringify({
                 conversation: conversationId,
-                from: user.id,
-                role: user.collection === 'candidates' ? 'candidate' : 'support', // Infer role
+                from: {
+                    value: senderId,
+                    relationTo: senderRole === 'candidate' ? 'candidates' : 'users',
+                },
+                role: senderRole,
                 text,
                 meta,
                 status: 'sent',

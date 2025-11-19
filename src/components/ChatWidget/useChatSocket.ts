@@ -18,10 +18,13 @@ export const useChatSocket = ({ token, onMessage }: UseChatSocketProps) => {
         const res = await fetch('/api/chat/widget-config')
         const config = await res.json()
         
+        console.log('Chat config fetched:', config)
+        
         // Also try to create/get conversation
         // In a real app, we might wait for user action, but for widget we often auto-create or fetch existing
         const chatRes = await fetch('/api/chat/create', { method: 'POST' })
         const chat = await chatRes.json()
+        console.log('Chat conversation:', chat)
         
         if (chat.id) {
           setConversationId(chat.id)
@@ -45,9 +48,16 @@ export const useChatSocket = ({ token, onMessage }: UseChatSocketProps) => {
       transports: ['websocket'],
     })
 
+    console.log('Connecting to socket:', url)
+
     newSocket.on('connect', () => {
+      console.log('Socket connected:', newSocket.id)
       setIsConnected(true)
       newSocket.emit('joinChat', { conversationId: chatId })
+    })
+
+    newSocket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err)
     })
 
     newSocket.on('disconnect', () => {
