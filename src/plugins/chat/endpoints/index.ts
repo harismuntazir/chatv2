@@ -22,7 +22,7 @@ export const chatEndpoints: Endpoint[] = [
         return Response.json({ error: 'Unauthorized' }, { status: 401 })
       }
 
-      const body = await req.json().catch(() => ({}))
+      const body = req.json ? await req.json().catch(() => ({})) : {}
       const candidateId = body.candidateId || user.id
 
       // Check if conversation exists
