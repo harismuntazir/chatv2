@@ -24,6 +24,9 @@ export default buildConfig({
   collections: [Users, Media, Roles],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
+  onInit: async (payload) => {
+    console.log('Payload Config Secret Prefix:', (process.env.PAYLOAD_SECRET || '').substring(0, 5))
+  },
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

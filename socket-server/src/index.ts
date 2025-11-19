@@ -7,6 +7,9 @@ import { authMiddleware } from './auth'
 import { messageHandler } from './handlers/messageHandler'
 
 dotenv.config()
+console.log('Socket Server Environment:')
+console.log('PAYLOAD_SECRET:', process.env.PAYLOAD_SECRET ? 'Loaded (' + process.env.PAYLOAD_SECRET.substring(0, 5) + '...)' : 'MISSING')
+console.log('SOCKET_PORT:', process.env.SOCKET_PORT)
 
 const app = express()
 app.use(cors())
