@@ -11,8 +11,9 @@ export const Conversations: CollectionConfig = {
     {
       name: 'candidate',
       type: 'relationship',
-      relationTo: 'candidates',
+      relationTo: 'users',
       required: true,
+      index: true,
     },
     {
       name: 'assignedSupport',

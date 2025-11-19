@@ -18,7 +18,7 @@ export const ChatMessages: CollectionConfig = {
     {
       name: 'from',
       type: 'relationship',
-      relationTo: ['users', 'candidates'],
+      relationTo: 'users',
       required: true,
     },
     {

@@ -25,7 +25,6 @@ const seed = async () => {
   console.error('Clearing existing data...')
   await payload.delete({ collection: 'users', where: {} })
   await payload.delete({ collection: 'roles', where: {} })
-  await payload.delete({ collection: 'candidates', where: {} })
 
   console.error('Creating roles...')
   const adminRole = await payload.create({
@@ -88,23 +87,7 @@ const seed = async () => {
     },
   })
 
-  // Create Candidate profiles for the candidate users
-  await payload.create({
-    collection: 'candidates',
-    data: {
-      email: 'candidate@test.com',
-      name: 'Candidate One',
-      password: 'password',
-    },
-  })
-  await payload.create({
-    collection: 'candidates',
-    data: {
-      email: 'candidate2@test.com',
-      name: 'Candidate Two',
-      password: 'password',
-    },
-  })
+
 
   console.error('Seed completed successfully.')
   process.exit(0)

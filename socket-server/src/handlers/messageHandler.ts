@@ -8,7 +8,7 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
   
   // If no user (anonymous socket), try to infer from conversation
   let senderId = user?.id
-  let senderRole = user?.collection === 'candidates' ? 'candidate' : 'support'
+  let senderRole = user?.roles?.some((r: any) => r.slug === 'candidate') ? 'candidate' : 'support'
 
   if (!user) {
     try {
@@ -41,10 +41,7 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
       },
       body: JSON.stringify({
         conversation: conversationId,
-        from: {
-          value: senderId,
-          relationTo: senderRole === 'candidate' ? 'candidates' : 'users',
-        },
+        from: senderId,
         role: senderRole,
         text,
         meta,
@@ -61,6 +58,13 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
 
     // 3. Emit to room
     io.to(`chat:${conversationId}`).emit('message', savedMessage.doc)
+
+    // 4. Notify support dashboard
+    io.to('support').emit('conversationUpdated', {
+      conversationId,
+      lastMessage: savedMessage.doc,
+      unreadCount: 1, // Simplified: In real app, calculate actual unread count
+    })
 
   } catch (error) {
     console.error('Error handling message:', error)

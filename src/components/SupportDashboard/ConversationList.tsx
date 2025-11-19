@@ -34,8 +34,8 @@ export const ConversationList: React.FC<ConversationListProps> = ({
 
     setIsSearching(true)
     try {
-      // Search candidates collection
-      const res = await fetch(`/api/candidates?where[email][contains]=${term}`)
+      // Search users collection for candidates
+      const res = await fetch(`/api/users?where[email][contains]=${term}&where[roles.slug][equals]=candidate`)
       const data = await res.json()
       setSearchResults(data.docs || [])
     } catch (err) {
@@ -95,7 +95,7 @@ export const ConversationList: React.FC<ConversationListProps> = ({
                 onClick={() => startChat(candidate.id)}
                 className="p-3 hover:bg-blue-50 cursor-pointer border-b border-gray-50 last:border-0"
               >
-                <div className="font-medium text-sm text-gray-900">{candidate.name || 'Unknown'}</div>
+                <div className="font-medium text-sm text-gray-900">{candidate.email || 'Unknown'}</div>
                 <div className="text-xs text-gray-500">{candidate.email}</div>
               </div>
             ))}
@@ -113,8 +113,9 @@ export const ConversationList: React.FC<ConversationListProps> = ({
             onClick={() => onSelect(conv.id)}
           >
             <div className="flex justify-between items-center mb-1">
-              <span className="font-medium text-gray-900 truncate max-w-[70%]">
-                {typeof conv.candidate === 'object' ? conv.candidate.email : 'Candidate'}
+              <span className="font-medium text-gray-900 truncate max-w-[70%] flex flex-col">
+                <span>{typeof conv.candidate === 'object' ? (conv.candidate as any).name || 'Unknown Candidate' : 'Candidate'}</span>
+                <span className="text-xs text-gray-500 font-normal">{typeof conv.candidate === 'object' ? conv.candidate.email : ''}</span>
               </span>
               <span className="text-xs text-gray-500">
                 {new Date(conv.lastMessageAt).toLocaleTimeString([], {

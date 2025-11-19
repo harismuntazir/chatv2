@@ -6,7 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authMiddleware = (socket, next) => {
-    const token = socket.handshake.auth.token;
+    let token = socket.handshake.auth.token;
+    // If no token in auth object, try to parse from cookies (for httpOnly cookies)
+    if (!token && socket.handshake.headers.cookie) {
+        console.log('Auth: Parsing cookies from headers');
+        const cookies = socket.handshake.headers.cookie.split(';').reduce((acc, cookie) => {
+            const [key, value] = cookie.trim().split('=');
+            acc[key] = value;
+            return acc;
+        }, {});
+        token = cookies['payload-token'];
+        console.log('Auth: Found token in cookies:', token ? 'Yes' : 'No');
+    }
+    else {
+        console.log('Auth: No token in auth object and no cookies found');
+    }
     if (!token) {
         // Allow anonymous connection (for candidates)
         return next();

@@ -64,13 +64,11 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
-    candidates: CandidateAuthOperations;
   };
   blocks: {};
   collections: {
     users: User;
     media: Media;
-    candidates: Candidate;
     roles: Role;
     conversations: Conversation;
     chat_messages: ChatMessage;
@@ -83,7 +81,6 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    candidates: CandidatesSelect<false> | CandidatesSelect<true>;
     roles: RolesSelect<false> | RolesSelect<true>;
     conversations: ConversationsSelect<false> | ConversationsSelect<true>;
     chat_messages: ChatMessagesSelect<false> | ChatMessagesSelect<true>;
@@ -98,37 +95,15 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user:
-    | (User & {
-        collection: 'users';
-      })
-    | (Candidate & {
-        collection: 'candidates';
-      });
+  user: User & {
+    collection: 'users';
+  };
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
-  forgotPassword: {
-    email: string;
-    password: string;
-  };
-  login: {
-    email: string;
-    password: string;
-  };
-  registerFirstUser: {
-    email: string;
-    password: string;
-  };
-  unlock: {
-    email: string;
-    password: string;
-  };
-}
-export interface CandidateAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -203,36 +178,11 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "candidates".
- */
-export interface Candidate {
-  id: string;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "conversations".
  */
 export interface Conversation {
   id: string;
-  candidate: string | Candidate;
+  candidate: string | User;
   assignedSupport?: (string | null) | User;
   status?: ('open' | 'pending' | 'resolved') | null;
   unreadByCandidate?: number | null;
@@ -258,15 +208,7 @@ export interface Conversation {
 export interface ChatMessage {
   id: string;
   conversation: string | Conversation;
-  from:
-    | {
-        relationTo: 'users';
-        value: string | User;
-      }
-    | {
-        relationTo: 'candidates';
-        value: string | Candidate;
-      };
+  from: string | User;
   role: 'candidate' | 'support' | 'system';
   text?: string | null;
   attachments?:
@@ -321,10 +263,6 @@ export interface PayloadLockedDocument {
         value: string | Media;
       } | null)
     | ({
-        relationTo: 'candidates';
-        value: string | Candidate;
-      } | null)
-    | ({
         relationTo: 'roles';
         value: string | Role;
       } | null)
@@ -337,15 +275,10 @@ export interface PayloadLockedDocument {
         value: string | ChatMessage;
       } | null);
   globalSlug?: string | null;
-  user:
-    | {
-        relationTo: 'users';
-        value: string | User;
-      }
-    | {
-        relationTo: 'candidates';
-        value: string | Candidate;
-      };
+  user: {
+    relationTo: 'users';
+    value: string | User;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -355,15 +288,10 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: string;
-  user:
-    | {
-        relationTo: 'users';
-        value: string | User;
-      }
-    | {
-        relationTo: 'candidates';
-        value: string | Candidate;
-      };
+  user: {
+    relationTo: 'users';
+    value: string | User;
+  };
   key?: string | null;
   value?:
     | {
@@ -428,29 +356,6 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "candidates_select".
- */
-export interface CandidatesSelect<T extends boolean = true> {
-  name?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

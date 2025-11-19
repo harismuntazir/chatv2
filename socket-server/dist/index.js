@@ -32,6 +32,13 @@ console.log('Socket.IO server starting with in-memory adapter');
             socket.join(`chat:${conversationId}`);
             console.log(`User ${(_a = socket.data.user) === null || _a === void 0 ? void 0 : _a.id} joined chat:${conversationId}`);
         });
+        socket.on('joinSupport', () => {
+            // Allow any authenticated user (or check for support role specifically)
+            if (socket.data.user) {
+                socket.join('support');
+                console.log(`User ${socket.data.user.id} joined support channel`);
+            }
+        });
         socket.on('message', (payload) => (0, messageHandler_1.messageHandler)(io, socket, payload));
         socket.on('disconnect', () => {
             console.log('User disconnected');

@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.messageHandler = void 0;
 const messageHandler = async (io, socket, payload) => {
+    var _a;
     const { conversationId, text, meta } = payload;
     let user = socket.data.user;
     const PAYLOAD_URL = process.env.PAYLOAD_URL || 'http://localhost:3000';
     // If no user (anonymous socket), try to infer from conversation
     let senderId = user === null || user === void 0 ? void 0 : user.id;
-    let senderRole = (user === null || user === void 0 ? void 0 : user.collection) === 'candidates' ? 'candidate' : 'support';
+    let senderRole = ((_a = user === null || user === void 0 ? void 0 : user.roles) === null || _a === void 0 ? void 0 : _a.some((r) => r.slug === 'candidate')) ? 'candidate' : 'support';
     if (!user) {
         try {
             // Fetch conversation to find the candidate
@@ -38,10 +39,7 @@ const messageHandler = async (io, socket, payload) => {
             },
             body: JSON.stringify({
                 conversation: conversationId,
-                from: {
-                    value: senderId,
-                    relationTo: senderRole === 'candidate' ? 'candidates' : 'users',
-                },
+                from: senderId,
                 role: senderRole,
                 text,
                 meta,
@@ -55,6 +53,12 @@ const messageHandler = async (io, socket, payload) => {
         const savedMessage = await response.json();
         // 3. Emit to room
         io.to(`chat:${conversationId}`).emit('message', savedMessage.doc);
+        // 4. Notify support dashboard
+        io.to('support').emit('conversationUpdated', {
+            conversationId,
+            lastMessage: savedMessage.doc,
+            unreadCount: 1, // Simplified: In real app, calculate actual unread count
+        });
     }
     catch (error) {
         console.error('Error handling message:', error);

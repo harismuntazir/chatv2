@@ -9,13 +9,39 @@ export default function SupportChatPage() {
   const [activeId, setActiveId] = useState<string | null>(null)
 
   useEffect(() => {
-    fetch('/api/chat/support-dashboard')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.docs) {
-          setConversations(data.docs)
-        }
-      })
+    const fetchConversations = () => {
+      fetch('/api/chat/support-dashboard', { cache: 'no-store' })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.docs) {
+            setConversations(data.docs)
+          }
+        })
+    }
+
+    fetchConversations()
+
+    // Socket connection for real-time updates
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:38120'
+    const { io } = require('socket.io-client')
+    const Cookies = require('js-cookie')
+    const token = Cookies.get('payload-token')
+
+    const socket = io(socketUrl, {
+      transports: ['websocket'],
+      auth: { token },
+    })
+
+    socket.on('connect', () => {
+      socket.emit('joinSupport')
+    })
+
+    socket.on('conversationUpdated', () => {
+      // Refresh list on update
+      fetchConversations()
+    })
+
+    return () => socket.disconnect()
   }, [])
 
   return (

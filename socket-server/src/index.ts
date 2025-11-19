@@ -34,6 +34,14 @@ console.log('Socket.IO server starting with in-memory adapter')
       console.log(`User ${socket.data.user?.id} joined chat:${conversationId}`)
     })
 
+    socket.on('joinSupport', () => {
+      // Allow any authenticated user (or check for support role specifically)
+      if (socket.data.user) {
+        socket.join('support')
+        console.log(`User ${socket.data.user.id} joined support channel`)
+      }
+    })
+
     socket.on('message', (payload) => messageHandler(io, socket, payload))
 
     socket.on('disconnect', () => {

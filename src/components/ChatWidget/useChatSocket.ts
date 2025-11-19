@@ -22,7 +22,10 @@ export const useChatSocket = ({ token, onMessage }: UseChatSocketProps) => {
         
         // Also try to create/get conversation
         // In a real app, we might wait for user action, but for widget we often auto-create or fetch existing
-        const chatRes = await fetch('/api/chat/create', { method: 'POST' })
+        const chatRes = await fetch('/api/chat/create', { 
+          method: 'POST',
+          credentials: 'include', // Important: Send cookies so API knows who we are
+        })
         const chat = await chatRes.json()
         console.log('Chat conversation:', chat)
         
@@ -43,8 +46,14 @@ export const useChatSocket = ({ token, onMessage }: UseChatSocketProps) => {
   }, [])
 
   const connectSocket = (url: string, chatId: string) => {
+    let socketToken = token
+    if (!socketToken) {
+      const Cookies = require('js-cookie')
+      socketToken = Cookies.get('payload-token')
+    }
+
     const newSocket = io(url, {
-      auth: { token },
+      auth: { token: socketToken },
       transports: ['websocket'],
     })
 

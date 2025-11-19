@@ -9,7 +9,6 @@ import sharp from 'sharp'
 import { Roles } from './collections/Roles'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
-import { Candidates } from './collections/Candidates'
 import { chatPlugin } from './plugins/chat'
 
 const filename = fileURLToPath(import.meta.url)
@@ -22,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Candidates, Roles],
+  collections: [Users, Media, Roles],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

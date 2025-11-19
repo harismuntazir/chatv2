@@ -15,7 +15,9 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
 
   useEffect(() => {
     if (conversationId) {
-      fetch(`/api/chat_messages?where[conversation][equals]=${conversationId}&sort=createdAt`)
+      fetch(`/api/chat_messages?where[conversation][equals]=${conversationId}&sort=createdAt`, {
+        cache: 'no-store',
+      })
         .then((res) => res.json())
         .then((data) => {
           if (data.docs) {
@@ -32,8 +34,14 @@ export const ChatPane: React.FC<ChatPaneProps> = ({ conversationId }) => {
   useEffect(() => {
     const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:38120'
     const { io } = require('socket.io-client')
+    const Cookies = require('js-cookie')
+    const token = Cookies.get('payload-token')
+
     const newSocket = io(socketUrl, {
       transports: ['websocket'],
+      auth: {
+        token,
+      },
     })
 
     newSocket.on('connect', () => {
