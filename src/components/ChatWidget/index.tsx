@@ -3,11 +3,17 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useChatSocket } from './useChatSocket'
 
-export const ChatWidget: React.FC = () => {
+export const ChatWidget: React.FC<{ user?: any }> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<any[]>([])
   const [inputValue, setInputValue] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Hide widget for support and admin roles
+  const shouldHide = user?.roles?.some((r: any) => 
+    (typeof r === 'string' ? r : r.slug) === 'admin' || 
+    (typeof r === 'string' ? r : r.slug) === 'support'
+  )
 
   const { isConnected, sendMessage, conversationId } = useChatSocket({
     onMessage: (msg) => {
@@ -37,6 +43,8 @@ export const ChatWidget: React.FC = () => {
     setInputValue('')
   }
 
+  if (shouldHide) return null
+
   return (
     <div className="fixed bottom-5 right-5 z-50 font-sans">
       {!isOpen && (
@@ -64,7 +72,13 @@ export const ChatWidget: React.FC = () => {
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-white md:absolute md:inset-auto md:bottom-20 md:right-0 md:w-80 md:h-[500px] md:rounded-xl md:shadow-2xl flex flex-col overflow-hidden border border-gray-200 animate-in slide-in-from-bottom-10 fade-in duration-300">
           <div className="bg-blue-600 text-white p-4 flex justify-between items-center shrink-0">
-            <h3 className="font-semibold text-lg">Support Chat</h3>
+            <div className="flex flex-col">
+              <h3 className="font-semibold text-lg">Support Chat</h3>
+              <span className="text-xs text-blue-100 flex items-center gap-1">
+                <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></span>
+                {isConnected ? 'Connected' : 'Connecting...'}
+              </span>
+            </div>
             <button
               onClick={() => setIsOpen(false)}
               className="text-white/80 hover:text-white transition-colors"
@@ -106,12 +120,10 @@ export const ChatWidget: React.FC = () => {
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Type a message..."
-              disabled={!isConnected}
               className="flex-1 px-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
             />
             <button
               onClick={handleSend}
-              disabled={!isConnected}
               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white p-2 rounded-full transition-colors flex items-center justify-center w-10 h-10"
             >
               <svg

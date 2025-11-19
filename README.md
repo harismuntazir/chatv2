@@ -6,8 +6,8 @@ A complete real-time chat solution built with Payload CMS, Socket.IO, and Next.j
 
 - **Real-time Chat**: Powered by a standalone Socket.IO server.
 - **Role-Based Access Control (RBAC)**: Admin, Support, and Candidate roles.
-- **Support Dashboard**: Dedicated interface for support agents to manage conversations.
-- **Candidate Widget**: Responsive chat widget for candidates to contact support.
+- **Support Dashboard**: Dedicated interface for support agents to manage conversations. Includes search functionality to find and message candidates.
+- **Candidate Widget**: Responsive chat widget for candidates to contact support. (Hidden for Admin/Support users).
 - **Modern UI**: Built with Tailwind CSS and responsive design.
 
 ## Prerequisites
@@ -84,11 +84,14 @@ You need to run both the Payload CMS (Next.js) and the Socket Server.
 ### 2. Support Dashboard
 - **URL**: `http://localhost:3000/admin/support`
 - **Login**: `support@test.com` / `password`
-- **Actions**: View active conversations and chat with candidates.
+- **Actions**: 
+    - View active conversations.
+    - **Search Candidates**: Use the search bar to find candidates by email and start a new conversation.
 
 ### 3. Candidate Chat
 - **URL**: `http://localhost:3000` (Home page)
-- **Login**: `candidate@test.com` / `password` (Log in via Admin panel first to establish session, or implement a custom login page)
+- **Login**: `candidate@test.com` / `password`
+- **Visibility**: The chat widget is **hidden** for Admin and Support users. Log in as a candidate (or use an incognito window) to see it.
 - **Actions**: Click the chat bubble in the bottom-right corner to start a conversation.
 
 ## Troubleshooting

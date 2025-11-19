@@ -9,7 +9,7 @@ export const chatEndpoints: Endpoint[] = [
       // and find their active conversation.
       // For MVP, we'll just return the socket URL.
       return Response.json({
-        socketUrl: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:4001',
+        socketUrl: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:38120',
       })
     },
   },
@@ -22,12 +22,15 @@ export const chatEndpoints: Endpoint[] = [
         return Response.json({ error: 'Unauthorized' }, { status: 401 })
       }
 
+      const body = await req.json().catch(() => ({}))
+      const candidateId = body.candidateId || user.id
+
       // Check if conversation exists
       const existing = await payload.find({
         collection: 'conversations',
         where: {
           candidate: {
-            equals: user.id,
+            equals: candidateId,
           },
           status: {
             not_equals: 'resolved',
@@ -43,7 +46,7 @@ export const chatEndpoints: Endpoint[] = [
       const newConversation = await payload.create({
         collection: 'conversations',
         data: {
-          candidate: user.id,
+          candidate: candidateId,
           status: 'open',
           lastMessageAt: new Date().toISOString(),
         },
