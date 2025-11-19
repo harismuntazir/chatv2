@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io'
 
 export const messageHandler = async (io: Server, socket: Socket, payload: any) => {
-  const { conversationId, text, meta } = payload
+  const { conversationId, text, meta, attachments } = payload
   let user = socket.data.user
 
   const PAYLOAD_URL = process.env.PAYLOAD_URL || 'http://localhost:3000'
@@ -44,6 +44,7 @@ export const messageHandler = async (io: Server, socket: Socket, payload: any) =
         from: senderId,
         role: senderRole,
         text,
+        attachments,
         meta,
         status: 'sent',
       }),

@@ -80,11 +80,12 @@ export const useChatSocket = ({ token, onMessage }: UseChatSocketProps) => {
     setSocket(newSocket)
   }
 
-  const sendMessage = (text: string, meta?: any) => {
+  const sendMessage = (text: string, meta?: { attachments?: string[], [key: string]: any }) => {
     if (socket && conversationId) {
       socket.emit('message', {
         conversationId,
         text,
+        attachments: meta?.attachments,
         meta,
       })
     }
