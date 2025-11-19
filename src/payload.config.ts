@@ -6,6 +6,7 @@ import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
+import { Roles } from './collections/Roles'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Candidates } from './collections/Candidates'
@@ -21,7 +22,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media, Candidates],
+  collections: [Users, Media, Candidates, Roles],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -71,6 +71,7 @@ export interface Config {
     users: User;
     media: Media;
     candidates: Candidate;
+    roles: Role;
     conversations: Conversation;
     chat_messages: ChatMessage;
     'payload-kv': PayloadKv;
@@ -83,6 +84,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     candidates: CandidatesSelect<false> | CandidatesSelect<true>;
+    roles: RolesSelect<false> | RolesSelect<true>;
     conversations: ConversationsSelect<false> | ConversationsSelect<true>;
     chat_messages: ChatMessagesSelect<false> | ChatMessagesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -150,6 +152,7 @@ export interface CandidateAuthOperations {
  */
 export interface User {
   id: string;
+  roles?: (string | Role)[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -167,6 +170,17 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles".
+ */
+export interface Role {
+  id: string;
+  name: string;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -311,6 +325,10 @@ export interface PayloadLockedDocument {
         value: string | Candidate;
       } | null)
     | ({
+        relationTo: 'roles';
+        value: string | Role;
+      } | null)
+    | ({
         relationTo: 'conversations';
         value: string | Conversation;
       } | null)
@@ -375,6 +393,7 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -432,6 +451,16 @@ export interface CandidatesSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles_select".
+ */
+export interface RolesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
