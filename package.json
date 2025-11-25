@@ -19,20 +19,25 @@
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run ./src/scripts/seed.ts"
   },
   "dependencies": {
+    "@diceui/mention": "^0.8.0",
     "@payloadcms/db-mongodb": "3.64.0",
     "@payloadcms/next": "3.64.0",
     "@payloadcms/richtext-lexical": "3.64.0",
     "@payloadcms/ui": "3.64.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "dotenv": "16.4.7",
     "graphql": "^16.8.1",
     "js-cookie": "^3.0.5",
+    "lucide-react": "^0.554.0",
     "next": "15.4.7",
     "payload": "3.64.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sharp": "0.34.2",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
     "@playwright/test": "1.56.1",

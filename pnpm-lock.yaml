@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@diceui/mention':
+        specifier: ^0.8.0
+        version: 0.8.0(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@payloadcms/db-mongodb':
         specifier: 3.64.0
         version: 3.64.0(payload@3.64.0(graphql@16.12.0)(typescript@5.7.3))
@@ -20,6 +23,12 @@ importers:
       '@payloadcms/ui':
         specifier: 3.64.0
         version: 3.64.0(@types/react@19.1.8)(monaco-editor@0.54.0)(next@15.4.7(@babel/core@7.28.5)(@playwright/test@1.56.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.94.1))(payload@3.64.0(graphql@16.12.0)(typescript@5.7.3))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.7.3)
+      class-variance-authority:
+        specifier: ^0.7.1
+        version: 0.7.1
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -32,6 +41,9 @@ importers:
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
+      lucide-react:
+        specifier: ^0.554.0
+        version: 0.554.0(react@19.1.0)
       next:
         specifier: 15.4.7
         version: 15.4.7(@babel/core@7.28.5)(@playwright/test@1.56.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(sass@1.94.1)
@@ -50,6 +62,9 @@ importers:
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1
+      tailwind-merge:
+        specifier: ^3.4.0
+        version: 3.4.0
     devDependencies:
       '@playwright/test':
         specifier: 1.56.1
@@ -245,6 +260,33 @@ packages:
 
   '@date-fns/tz@1.2.0':
     resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
+
+  '@diceui/mention@0.8.0':
+    resolution: {integrity: sha512-BHTYLG4qJA+9TJ/n5otlIHoJuLz5v13xAayYsRL7lnCnp4ik37uYrLpA+25y+uQmJ5i1W3kv2MfD2ZasvDzDDw==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@diceui/shared@0.12.0':
+    resolution: {integrity: sha512-aJ+gxHTleFD8b9DgXOb7G0sHymW8nMK4C3KXDMca4+PPl1NsfRG/Lnb2dN8vq44XOb/W7Wjn3gmgakXAOzgrJA==}
+    peerDependencies:
+      '@floating-ui/react': ^0.27.4
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
 
   '@dnd-kit/accessibility@3.1.1':
     resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
@@ -1875,6 +1917,9 @@ packages:
     resolution: {integrity: sha512-Wdy2Igu8OcBpI2pZePZ5oWjPC38tmDVx5WKUXKwlLYkA0ozo85sLsLvkBbBn/sZaSCMFOGZJ14fvW9t5/d7kdA==}
     engines: {node: '>=8'}
 
+  class-variance-authority@0.7.1:
+    resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
+
   client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
 
@@ -2878,6 +2923,11 @@ packages:
   lru-cache@5.1.1:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
 
+  lucide-react@0.554.0:
+    resolution: {integrity: sha512-St+z29uthEJVx0Is7ellNkgTEhaeSoA42I7JjOCBCrc5X6LYMGSv0P/2uS5HDLTExP5tpiqRD2PyUEOS6s9UXA==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
@@ -3661,6 +3711,9 @@ packages:
   tabbable@6.3.0:
     resolution: {integrity: sha512-EIHvdY5bPLuWForiR/AN2Bxngzpuwn1is4asboytXtpTgsArc+WmSJKVLlhdh71u7jFcryDqB2A8lQvj78MkyQ==}
 
+  tailwind-merge@3.4.0:
+    resolution: {integrity: sha512-uSaO4gnW+b3Y2aWoWfFpX62vn2sR3skfhbjsEnaBI81WD1wBLlHZe5sWf0AqjksNdYTbGBEd0UasQMT3SNV15g==}
+
   tailwindcss@4.1.17:
     resolution: {integrity: sha512-j9Ee2YjuQqYT9bbRTfTZht9W/ytp5H+jJpZKiYdP/bpnXARAuELt9ofP0lPnmHjbga7SNQIxdTAXCmtKVYjN+Q==}
 
@@ -4198,6 +4251,25 @@ snapshots:
   '@csstools/css-tokenizer@3.0.4': {}
 
   '@date-fns/tz@1.2.0': {}
+
+  '@diceui/mention@0.8.0(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@diceui/shared': 0.12.0(@floating-ui/react@0.27.16(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@floating-ui/react': 0.27.16(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.8
+      '@types/react-dom': 19.1.6(@types/react@19.1.8)
+
+  '@diceui/shared@0.12.0(@floating-ui/react@0.27.16(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@floating-ui/react': 0.27.16(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+    optionalDependencies:
+      '@types/react': 19.1.8
+      '@types/react-dom': 19.1.6(@types/react@19.1.8)
 
   '@dnd-kit/accessibility@3.1.1(react@19.1.0)':
     dependencies:
@@ -5824,6 +5896,10 @@ snapshots:
 
   ci-info@4.3.1: {}
 
+  class-variance-authority@0.7.1:
+    dependencies:
+      clsx: 2.1.1
+
   client-only@0.0.1: {}
 
   clsx@2.1.1: {}
@@ -6946,6 +7022,10 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
+  lucide-react@0.554.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+
   lz-string@1.5.0: {}
 
   magic-string@0.30.21:
@@ -8019,6 +8099,8 @@ snapshots:
   symbol-tree@3.2.4: {}
 
   tabbable@6.3.0: {}
+
+  tailwind-merge@3.4.0: {}
 
   tailwindcss@4.1.17: {}
 
